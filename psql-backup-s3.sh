@@ -9,7 +9,6 @@ if [ -z "$GPG_KEY" ] || \
     [ -z "$POSTGRES_PASSWORD" ] || \
     [ -z "$POSTGRES_USER" ] || \
     [ -z "$POSTGRES_HOST" ] || \
-    [ -z "$POSTGRES_DB" ] || \
     [ -z "$AWS_ACCESS_KEY_ID" ] || \
     [ -z "$AWS_SECRET_ACCESS_KEY" ] || \
     [ -z "$AWS_DEFAULT_REGION" ] || \
@@ -26,11 +25,11 @@ echo "$GPG_KEY" | gpg --batch --import
 
 # Create backup params
 backup_dir=$(mktemp -d)
-backup_name=$POSTGRES_DB'--'$(date +%d'-'%m'-'%Y'--'%H'-'%M'-'%S).sql.bz2.gpg
+backup_name=$POSTGRES_HOST'--'$(date +%d'-'%m'-'%Y'--'%H'-'%M'-'%S).sql.bz2.gpg
 backup_path="$backup_dir/$backup_name"
 
 # Create, compress, and encrypt the backup
-PGPASSWORD=$POSTGRES_PASSWORD pg_dump -d "$POSTGRES_DB" -U "$POSTGRES_USER" -h "$POSTGRES_HOST" | bzip2 | gpg --batch --recipient "$GPG_KEY_ID" --trust-model always --encrypt --output "$backup_path"
+PGPASSWORD=$POSTGRES_PASSWORD pg_dumpall -v -U "$POSTGRES_USER" -h "$POSTGRES_HOST" | bzip2 | gpg --batch --recipient "$GPG_KEY_ID" --trust-model always --encrypt --output "$backup_path"
 
 # Check backup created
 if [ ! -e "$backup_path" ]; then
