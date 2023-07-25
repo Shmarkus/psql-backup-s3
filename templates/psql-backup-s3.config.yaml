@@ -6,7 +6,6 @@ metadata:
 data:
   ROTATION_PERIOD:      # days to keep backups (exclude to stop backups from deleting)
   POSTGRES_HOST:        # postgres k8s service hostname
-  POSTGRES_DB:          # name of database to backup
   AWS_DEFAULT_REGION:   # aws s3 bucket region
   S3_BUCKET:            # aws s3 bucket name
   GPG_KEY_ID:           # email id used in gpg key generation
